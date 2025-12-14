@@ -1,0 +1,824 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>青苹果</title>
+  <style>
+    :root{
+      /* 白色为主（清爽、留白、轻盈） */
+      --bg:#f8fafc;          /* 页面底 */
+      --bg2:#ffffff;         /* 上层渐变 */
+      --card:#ffffff;        /* 卡片底 */
+      --bd:#e2e8f0;          /* 边框 */
+      --bd2:#cbd5e1;         /* 强一点的边框 */
+      --fg:#0f172a;          /* 主文字 */
+      --mut:#475569;         /* 次级文字 */
+
+      /* 点缀色：主色靛蓝 + 辅色青绿（少量使用） */
+      --acc:#6366f1;         /* indigo */
+      --acc2:#06b6d4;        /* cyan */
+      --ok:#10b981;
+      --warn:#f59e0b;
+      --bad:#fb7185;
+
+      --shadow: 0 10px 30px rgba(2,6,23,.08);
+      --shadow2: 0 16px 44px rgba(2,6,23,.10);
+      --r:18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      color:var(--fg);
+      background:
+        radial-gradient(900px 480px at 10% 0%, rgba(99,102,241,.12), transparent 56%),
+        radial-gradient(900px 480px at 90% 10%, rgba(6,182,212,.10), transparent 56%),
+        linear-gradient(180deg, var(--bg2), var(--bg));
+      min-height:100vh;
+    }
+
+    .wrap{max-width:1200px;margin:0 auto;padding:18px 14px 28px}
+    .top{
+      display:flex; gap:12px; align-items:center; justify-content:space-between;
+      flex-wrap:wrap; margin-bottom:14px;
+    }
+    .brand{display:flex; gap:12px; align-items:center;}
+    .logo{
+      width:42px;height:42px;border-radius:14px;
+      background: linear-gradient(135deg, rgba(99,102,241,.95), rgba(6,182,212,.95));
+      box-shadow: 0 12px 22px rgba(99,102,241,.16);
+      position:relative; overflow:hidden;
+    }
+    .logo:after{
+      content:""; position:absolute; inset:-45%;
+      background: conic-gradient(from 90deg, transparent 0 35%, rgba(255,255,255,.65) 45%, transparent 55% 100%);
+      animation: spin 5s linear infinite;
+    }
+    @keyframes spin { to{ transform: rotate(360deg);} }
+
+    .title h1{font-size:18px;margin:0}
+    .title p{margin:4px 0 0;color:var(--mut);font-size:12px}
+
+    .pill{
+      display:inline-flex; gap:8px; align-items:center;
+      border:1px solid var(--bd); background: rgba(255,255,255,.85);
+      padding:8px 10px; border-radius:999px; font-size:12px; color:var(--mut);
+      box-shadow: 0 8px 18px rgba(2,6,23,.06);
+      white-space:nowrap;
+      backdrop-filter: blur(6px);
+    }
+
+    .grid{
+      display:grid; gap:14px;
+      grid-template-columns: 420px 1fr;
+      align-items:start;
+    }
+    @media (max-width: 980px){
+      .grid{ grid-template-columns: 1fr; }
+      .log{ height: 420px; }
+    }
+
+    .card{
+      border:1px solid var(--bd);
+      background: var(--card);
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      transition: box-shadow .18s ease, transform .18s ease;
+    }
+    .card:hover{ box-shadow: var(--shadow2); transform: translateY(-1px); }
+    .cardHead{
+      padding:12px 14px;
+      background: linear-gradient(135deg, rgba(99,102,241,.10), rgba(6,182,212,.08));
+      border-bottom:1px solid var(--bd);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .cardHead h2{margin:0;font-size:13px;color:#0f172a;letter-spacing:.2px}
+    .cardBody{padding:12px 14px}
+
+    label{display:block;font-size:12px;color:var(--mut);margin:10px 0 6px}
+    input, textarea, select{
+      width:100%; padding:10px 11px; border-radius:14px;
+      border:1px solid var(--bd);
+      background: #ffffff;
+      color: var(--fg);
+      outline:none;
+      transition: transform .08s ease, border-color .15s ease, box-shadow .15s ease;
+    }
+    input:focus, textarea:focus, select:focus{
+      border-color: rgba(99,102,241,.65);
+      box-shadow: 0 0 0 4px rgba(99,102,241,.12);
+      transform: translateY(-1px);
+    }
+    textarea{min-height:86px;resize:vertical}
+
+    .row{display:grid; grid-template-columns: 1fr 1fr; gap:10px}
+    @media (max-width: 560px){ .row{ grid-template-columns: 1fr; } }
+
+    .btns{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
+    button{
+      border:1px solid var(--bd);
+      background:#ffffff;
+      color: var(--fg);
+      padding:10px 14px;
+      border-radius: 999px;
+      cursor:pointer;
+      transition: transform .08s ease, filter .15s ease, background .15s ease, box-shadow .15s ease, border-color .15s ease;
+      box-shadow: 0 10px 22px rgba(2,6,23,.06);
+      user-select:none;
+    }
+    button:hover{ filter: brightness(1.02); box-shadow: 0 12px 26px rgba(2,6,23,.08); }
+    button:active{ transform: translateY(1px) scale(.99); }
+    button:focus-visible{
+      outline:none;
+      box-shadow: 0 0 0 4px rgba(99,102,241,.14), 0 12px 26px rgba(2,6,23,.08);
+      border-color: rgba(99,102,241,.55);
+    }
+
+    button.primary{
+      color:#0b1020;
+      background: linear-gradient(135deg, rgba(99,102,241,.22), rgba(6,182,212,.16));
+      border-color: rgba(99,102,241,.35);
+    }
+    button.bad{
+      color:#6b1021;
+      background: rgba(251,113,133,.14);
+      border-color: rgba(251,113,133,.30);
+    }
+    button.gray{
+      background: rgba(15,23,42,.03);
+      border-color: rgba(15,23,42,.10);
+    }
+
+    .mini{
+      display:inline-flex; align-items:center; gap:8px;
+      border:1px solid rgba(15,23,42,.10);
+      background: rgba(255,255,255,.85);
+      padding:6px 10px; border-radius:999px; color:var(--mut); font-size:12px;
+      white-space:nowrap;
+      backdrop-filter: blur(6px);
+    }
+    .tag{
+      display:inline-flex; align-items:center; gap:6px;
+      padding: 6px 10px; border-radius:999px;
+      background: rgba(255,255,255,.85);
+      border:1px solid rgba(15,23,42,.10);
+      color: var(--mut); font-size: 12px;
+      white-space:nowrap;
+      backdrop-filter: blur(6px);
+    }
+    .dot{width:8px;height:8px;border-radius:999px;background:var(--mut);opacity:.9}
+    .dot.ok{ background: var(--ok); }
+    .dot.warn{ background: var(--warn); }
+    .dot.bad{ background: var(--bad); }
+
+    .kv{
+      display:grid; grid-template-columns: 120px 1fr;
+      gap: 8px; font-size: 12px; margin-top: 10px; color: var(--mut);
+    }
+    .kv b{ color: #0f172a; font-weight: 650; }
+
+    .sep{ height:1px; background: rgba(15,23,42,.08); margin: 12px 0; }
+
+    .log{
+      height: 600px;
+      overflow:auto;
+      border-radius: 14px;
+      border: 1px solid var(--bd);
+      background: #ffffff;
+      padding: 12px;
+      white-space: pre-wrap;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono";
+      font-size: 12px;
+      line-height: 1.55;
+      color:#0f172a;
+    }
+    /* 细滚动条（不影响功能） */
+    .log::-webkit-scrollbar{ width: 10px; height: 10px; }
+    .log::-webkit-scrollbar-thumb{
+      background: rgba(15,23,42,.14);
+      border-radius: 999px;
+      border: 2px solid #ffffff;
+    }
+    .log::-webkit-scrollbar-track{ background: transparent; }
+
+    .hint{font-size:12px;color:var(--mut);line-height:1.55}
+    .footerTip{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius: 14px;
+      border:1px dashed rgba(15,23,42,.14);
+      background: rgba(6,182,212,.05);
+      color: var(--mut);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    /* 高级设置折叠 */
+    details.adv{
+      margin-top: 10px;
+      border:1px solid rgba(15,23,42,.10);
+      border-radius: 14px;
+      background: rgba(15,23,42,.02);
+      overflow:hidden;
+    }
+    details.adv > summary{
+      list-style:none;
+      cursor:pointer;
+      padding:10px 12px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      user-select:none;
+      color:#0f172a;
+      font-size:12px;
+      font-weight:650;
+    }
+    details.adv > summary::-webkit-details-marker{ display:none; }
+    .chev{
+      width:26px; height:26px; border-radius:999px;
+      border:1px solid rgba(15,23,42,.10);
+      background: rgba(255,255,255,.90);
+      display:grid; place-items:center;
+      transition: transform .18s ease;
+      color:#0f172a;
+    }
+    details.adv[open] .chev{ transform: rotate(180deg); }
+    .advBody{ padding: 0 12px 12px; }
+    .subtle{ color: var(--mut); font-size: 12px; font-weight: 500; }
+  </style>
+</head>
+
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div class="brand">
+      <div class="logo" aria-hidden="true"></div>
+      <div class="title">
+        <h1>青苹果</h1>
+        <p>仅供娱乐 </p>
+      </div>
+    </div>
+    <div class="pill" title="浏览器限制提示">
+      <span class="dot warn"></span>
+      <span>如遇 CORS / 证书问题：需后端放行或做同域代理（前端无法关闭 SSL 校验）</span>
+    </div>
+  </div>
+
+  <div class="grid">
+    <!-- 配置卡 -->
+    <div class="card">
+      <div class="cardHead">
+        <h2>配置中心</h2>
+        <span class="mini" id="miniStatus"><span class="dot warn"></span><span>待命</span></span>
+      </div>
+
+      <div class="cardBody">
+        <!-- 外部保留：密钥、执行次数、等待策略 -->
+        <div class="row">
+          <div>
+            <label>密钥ID（SECRET_ID）</label>
+            <input id="secretId" placeholder="必填"/>
+          </div>
+          <div>
+            <label>密钥KEY（SECRET_KEY）</label>
+            <input id="secretKey" placeholder="必填"/>
+          </div>
+        </div>
+
+        <div class="row">
+          <div>
+            <label>执行次数（原 RUN_TIMES）</label>
+            <input id="runTimes" type="number" value="30" min="1" />
+          </div>
+          <div>
+            <label>等待策略（原 WAIT_STRATEGY）</label>
+            <select id="waitMode">
+              <option value="full" selected>按视频时长 + 额外秒数</option>
+              <option value="fast">快速等待（固定秒数）</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 高级设置：按你之前要求隐藏的项 -->
+        <details class="adv" id="advBox">
+          <summary>
+            <span>高级设置 <span class="subtle">（接口/UA/设备/间隔/失败阈值/等待参数）</span></span>
+            <span class="chev" aria-hidden="true">▾</span>
+          </summary>
+
+          <div class="advBody">
+            <label>接口地址（BASE_URL）</label>
+            <input id="baseUrl" value="https://api.zhenghui.xyz"/>
+
+            <div class="row">
+              <div>
+                <label>平台（PLATFORM）</label>
+                <select id="platform">
+                  <option value="android" selected>安卓 android</option>
+                  <option value="ios">苹果 ios</option>
+                </select>
+              </div>
+              <div>
+                <label>应用版本（APP_VERSION）</label>
+                <input id="appVersion" value="1.0.0"/>
+              </div>
+            </div>
+
+            <label>User-Agent（浏览器标识）</label>
+            <textarea id="userAgent">Mozilla/5.0 (Linux; Android 15; PKG110 Build/UKQ1.231108.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/134.0.6998.135 Mobile Safari/537.36 uni-app Html5Plus/1.0 (Immersed/40.0)</textarea>
+
+            <div class="sep"></div>
+
+            <div class="row">
+              <div>
+                <label>设备模式</label>
+                <select id="deviceMode">
+                  <option value="random" selected>随机设备（本次固定一台）</option>
+                  <option value="fixed">固定设备模板</option>
+                  <option value="custom">手填设备 JSON</option>
+                </select>
+              </div>
+              <div>
+                <label>上报IP（本次启动固定）</label>
+                <input id="clientIp" />
+              </div>
+            </div>
+
+            <label>设备信息（固定模板 / 手填 JSON）</label>
+            <textarea id="deviceJson">{
+  "id": "64B3FE7F77DCBF6BE8F69992A55CF272",
+  "brand": "oppo",
+  "model": "CPH1805",
+  "platform": "android",
+  "system": "Android 15"
+}</textarea>
+
+            <div class="sep"></div>
+
+            <div class="row">
+              <div>
+                <label>最大连续失败次数（原 MAX_CONSECUTIVE_FAILURES）</label>
+                <input id="maxFails" type="number" value="3" min="1" />
+              </div>
+              <div>
+                <label>等待参数（原 WAIT_EXTRA_SECONDS / FAST_WAIT_SECONDS）</label>
+                <input id="waitParam" type="number" value="2" min="0" />
+              </div>
+            </div>
+
+            <div class="row">
+              <div>
+                <label>最小间隔秒（原 MIN_INTERVAL）</label>
+                <input id="minInterval" type="number" value="5" min="0" />
+              </div>
+              <div>
+                <label>最大间隔秒（原 MAX_INTERVAL）</label>
+                <input id="maxInterval" type="number" value="10" min="0" />
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <div class="btns">
+          <button class="gray" id="btnGenDevice">生成/刷新设备</button>
+          <button class="gray" id="btnClear">清空日志</button>
+        </div>
+
+        <div class="footerTip">
+          说明：现在右侧操作面板已简化，只保留「一键循环执行 / 停止」。单步按钮已移除，但逻辑仍按：登录 → 获取广告 → 上报开始 → 等待 → 上报结束。
+        </div>
+      </div>
+    </div>
+
+    <!-- 操作 + 日志（简化按钮） -->
+    <div class="card">
+      <div class="cardHead">
+        <h2>运行与日志</h2>
+        <span class="tag" id="tagInfo"><span class="dot warn"></span><span>待命</span></span>
+      </div>
+      <div class="cardBody">
+
+        <div class="btns">
+          <button class="primary" id="btnRunAll">▶ 一键循环执行</button>
+          <button class="bad" id="btnStop">■ 停止</button>
+        </div>
+
+        <div class="kv">
+          <div>Token</div><div><b id="stToken">-</b></div>
+          <div>app-device</div><div><b id="stDevice">-</b></div>
+          <div>广告ID / 时长</div><div><b id="stAd">-</b></div>
+          <div>记录ID（record_id）</div><div><b id="stRecord">-</b></div>
+          <div>运行次数</div><div><b id="stRuns">0/0</b></div>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="log" id="log"></div>
+
+        <div class="hint" style="margin-top:10px">
+          日志会打印：请求 URL、请求体（部分接口）、响应 JSON、等待时长。
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ===== 小工具 =====
+  const $ = (id) => document.getElementById(id);
+  const logEl = $("log");
+
+  function setTag(type, text){
+    const tag = $("tagInfo");
+    const mini = $("miniStatus");
+    const dotCls = type === "ok" ? "ok" : type === "bad" ? "bad" : "warn";
+    tag.innerHTML = `<span class="dot ${dotCls}"></span><span>${text}</span>`;
+    mini.innerHTML = `<span class="dot ${dotCls}"></span><span>${text}</span>`;
+  }
+
+  function log(...args) {
+    const msg = args.map(a => typeof a === "string" ? a : JSON.stringify(a, null, 2)).join(" ");
+    const line = `[${new Date().toLocaleTimeString()}] ${msg}\n`;
+    logEl.textContent += line;
+    logEl.scrollTop = logEl.scrollHeight;
+  }
+
+  function sleep(ms, signal) {
+    return new Promise((resolve, reject) => {
+      const t = setTimeout(resolve, ms);
+      if (signal) {
+        signal.addEventListener("abort", () => {
+          clearTimeout(t);
+          reject(new DOMException("Aborted", "AbortError"));
+        }, { once: true });
+      }
+    });
+  }
+
+  function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+  function randHex(n) {
+    const chars = "0123456789ABCDEF";
+    let out = "";
+    for (let i = 0; i < n; i++) out += chars[Math.floor(Math.random() * chars.length)];
+    return out;
+  }
+  function utcIsoMs(){ return new Date().toISOString(); }
+  function genClientIp(){ return `223.1${randInt(0,9)}${randInt(0,9)}.${randInt(1,254)}.${randInt(1,254)}`; }
+
+  // ===== 状态 =====
+  const state = {
+    token: "",
+    appDevice: null,
+    adId: null,
+    duration: 0,
+    recordId: null,
+    aborter: null,
+    loopCurrent: 0,
+    loopTotal: 0
+  };
+
+  function updateStatus() {
+    $("stToken").textContent = state.token ? (state.token.slice(0, 16) + "…") : "-";
+    $("stDevice").textContent = state.appDevice ? JSON.stringify(state.appDevice) : "-";
+    $("stAd").textContent = (state.adId != null) ? `${state.adId} / ${state.duration}s` : "-";
+    $("stRecord").textContent = (state.recordId != null) ? `${state.recordId}` : "-";
+
+    if ($("stRuns")) {
+      const cur = (typeof state.loopCurrent === "number") ? state.loopCurrent : 0;
+      const tot = (typeof state.loopTotal === "number") ? state.loopTotal : 0;
+      $("stRuns").textContent = `${cur}/${tot}`;
+    }
+
+    // 仅做状态提示，不强制“已登录”才 ok（因为 run 中会自动登录）
+    if (state.aborter) setTag("warn", "运行中…");
+    else setTag("warn", "待命");
+  }
+
+  function readConfig() {
+    const cfg = {
+      baseUrl: ($("baseUrl")?.value || "https://api.zhenghui.xyz").trim().replace(/\/+$/,""),
+      secretId: $("secretId").value.trim(),
+      secretKey: $("secretKey").value.trim(),
+      platform: ($("platform")?.value || "android").trim(),
+      appVersion: ($("appVersion")?.value || "1.0.0").trim(),
+      userAgent: ($("userAgent")?.value || "").trim(),
+
+      deviceMode: ($("deviceMode")?.value || "random"),
+      deviceJson: ($("deviceJson")?.value || "").trim(),
+      clientIp: ($("clientIp")?.value || "").trim(),
+
+      runTimes: Number($("runTimes").value),
+
+      maxFails: Number($("maxFails")?.value ?? 3),
+      minInterval: Number($("minInterval")?.value ?? 5),
+      maxInterval: Number($("maxInterval")?.value ?? 10),
+
+      waitMode: $("waitMode").value,
+      waitParam: Number($("waitParam")?.value ?? 2),
+    };
+
+    if (!cfg.clientIp) {
+      cfg.clientIp = genClientIp();
+      if ($("clientIp")) $("clientIp").value = cfg.clientIp;
+    }
+    return cfg;
+  }
+
+  function buildDevice(cfg) {
+    if (cfg.deviceMode === "random") {
+      const models = ["CPH1805", "Reno5", "PHZ110", "PGEM10"];
+      return {
+        id: randHex(32),
+        brand: "oppo",
+        model: models[Math.floor(Math.random()*models.length)],
+        platform: cfg.platform,
+        system: "Android 15"
+      };
+    }
+    if (cfg.deviceMode === "fixed" || cfg.deviceMode === "custom") {
+      let obj;
+      try { obj = JSON.parse(cfg.deviceJson); }
+      catch { throw new Error("设备 JSON 解析失败：请检查格式"); }
+      if (!obj || typeof obj !== "object") throw new Error("设备 JSON 必须是对象");
+      if (!obj.id) throw new Error("设备 JSON 必须包含 id 字段");
+      obj.platform = obj.platform || cfg.platform;
+      return obj;
+    }
+    throw new Error("未知设备模式");
+  }
+
+  function commonHeaders(cfg) {
+    const h = {
+      "Accept": "application/json",
+      "Content-Type": "application/json; charset=UTF-8",
+      "app-version": cfg.appVersion,
+    };
+    // 允许留空：留空则不强行覆盖 UA
+    if (cfg.userAgent) h["User-Agent"] = cfg.userAgent;
+    return h;
+  }
+
+  async function apiFetch(cfg, path, { method="GET", headers={}, body=null, signal=null } = {}) {
+    const url = cfg.baseUrl + path;
+    const h = { ...commonHeaders(cfg), ...headers };
+    const opt = { method, headers: h, signal };
+    if (body != null) opt.body = JSON.stringify(body);
+
+    log(`${method} ${url}`);
+    const resp = await fetch(url, opt);
+    const text = await resp.text();
+    let data;
+    try { data = JSON.parse(text); } catch { data = { _raw: text }; }
+    if (!resp.ok) throw new Error(`HTTP ${resp.status} ${resp.statusText} :: ${text.slice(0, 300)}`);
+    return data;
+  }
+
+  // ===== 业务步骤 =====
+  async function stepLogin(signal) {
+    const cfg = readConfig();
+    if (!cfg.secretId || !cfg.secretKey) throw new Error("密钥ID / 密钥KEY 为必填");
+
+    if (!state.appDevice) state.appDevice = buildDevice(cfg);
+
+    setTag("warn", "登录中…");
+    const headers = { "app-device": JSON.stringify(state.appDevice) };
+    const body = { secretId: cfg.secretId, secretKey: cfg.secretKey };
+
+    const data = await apiFetch(cfg, "/api/app/v1/auth/secretKeyLogin", { method:"POST", headers, body, signal });
+    log("[登录] resp:", data);
+
+    if (data.code !== 0) throw new Error(`登录失败: ${JSON.stringify(data)}`);
+    const token = data?.data?.token;
+    if (!token) throw new Error(`登录未返回 token: ${JSON.stringify(data)}`);
+
+    state.token = token;
+    updateStatus();
+    return token;
+  }
+
+  async function stepNext(signal) {
+    const cfg = readConfig();
+    if (!state.token) throw new Error("请先登录获取 token");
+
+    setTag("warn", "获取广告中…");
+    const headers = {
+      "Authorization": `Bearer ${state.token}`,
+      "app-device": JSON.stringify(state.appDevice),
+    };
+
+    const data = await apiFetch(cfg, "/api/app/v1/ad/next", { method:"GET", headers, signal });
+    log("[获取广告] resp:", data);
+
+    if (data.code !== 0) throw new Error(`获取广告失败: ${JSON.stringify(data)}`);
+    const result = data?.data?.result || {};
+    const adId = result?.id;
+    const duration = Number.parseInt(result?.video?.duration ?? 0, 10) || 0;
+    if (!adId) throw new Error(`获取广告没拿到 id: ${JSON.stringify(data)}`);
+
+    state.adId = Number(adId);
+    state.duration = duration;
+    updateStatus();
+    log(`-> 广告ID=${state.adId}, 标题=${result?.title ?? "-"}, 时长=${state.duration}s`);
+    return { adId: state.adId, duration: state.duration, result };
+  }
+
+  async function stepPlay(signal) {
+    const cfg = readConfig();
+    if (!state.token) throw new Error("请先登录获取 token");
+    if (state.adId == null) throw new Error("请先获取广告");
+
+    setTag("warn", "上报开始中…");
+    const headers = {
+      "Authorization": `Bearer ${state.token}`,
+      "app-device": JSON.stringify(state.appDevice),
+    };
+
+    const body = {
+      id: state.adId,
+      playTime: utcIsoMs(),
+      clientIp: cfg.clientIp,
+      deviceInfo: { deviceId: state.appDevice.id, platform: cfg.platform },
+    };
+
+    log("[上报开始] req:", body);
+    const data = await apiFetch(cfg, "/api/app/v1/ad/video/play", { method:"POST", headers, body, signal });
+    log("[上报开始] resp:", data);
+
+    if (data.code !== 0) throw new Error(`上报开始失败: ${JSON.stringify(data)}`);
+    const recordId = data?.data?.id;
+    if (!recordId) throw new Error(`上报开始未返回记录 id: ${JSON.stringify(data)}`);
+
+    state.recordId = Number(recordId);
+    updateStatus();
+    return state.recordId;
+  }
+
+  async function stepEnded(signal) {
+    const cfg = readConfig();
+    if (!state.token) throw new Error("请先登录获取 token");
+    if (state.recordId == null) throw new Error("请先上报开始");
+
+    setTag("warn", "上报结束中…");
+    const headers = {
+      "Authorization": `Bearer ${state.token}`,
+      "app-device": JSON.stringify(state.appDevice),
+    };
+
+    const body = {
+      id: state.recordId,
+      endTime: utcIsoMs(),
+      clientIp: cfg.clientIp,
+      deviceInfo: { deviceId: state.appDevice.id, platform: cfg.platform },
+    };
+
+    log("[上报结束] req:", body);
+    const data = await apiFetch(cfg, "/api/app/v1/ad/video/ended", { method:"POST", headers, body, signal });
+    log("[上报结束] resp:", data);
+
+    if (data.code !== 0) throw new Error(`上报结束失败: ${JSON.stringify(data)}`);
+    setTag("ok", "本轮完成 ✅");
+    return data;
+  }
+
+  async function runOnce(signal) {
+    const cfg = readConfig();
+
+    await stepLogin(signal);
+    await stepNext(signal);
+    await stepPlay(signal);
+
+    let waitSec = 0;
+    if (cfg.waitMode === "full" && state.duration > 0) waitSec = state.duration + Math.max(cfg.waitParam, 0);
+    else waitSec = Math.max(cfg.waitParam, 0);
+
+    setTag("warn", `等待中…（${waitSec}s）`);
+    log(`等待 ${waitSec}s ...`);
+    await sleep(waitSec * 1000, signal);
+
+    await stepEnded(signal);
+  }
+
+  async function runLoop() {
+    const cfg = readConfig();
+    if (!cfg.secretId || !cfg.secretKey) throw new Error("请先填写密钥ID / 密钥KEY");
+
+    // 每次点击“一键循环执行”，生成一次新的固定 IP（与脚本一致）
+    if ($("clientIp")) $("clientIp").value = genClientIp();
+
+    // 本次循环固定同一设备（本次固定一台）
+    state.appDevice = buildDevice(readConfig());
+    state.token = "";
+    state.adId = null;
+    state.duration = 0;
+    state.recordId = null;
+    state.loopTotal = cfg.runTimes;
+    state.loopCurrent = 0;
+
+    let consecutiveFails = 0;
+
+    state.aborter = new AbortController();
+    const signal = state.aborter.signal;
+
+    setTag("warn", "循环执行中…");
+    updateStatus();
+
+    log(`## 开始执行：共 ${cfg.runTimes} 次；最大连续失败 ${cfg.maxFails}`);
+    log(`## 本次固定上报IP: ${$("clientIp") ? $("clientIp").value : cfg.clientIp}`);
+    log(`## 本次固定设备:`, state.appDevice);
+
+    for (let i = 0; i < cfg.runTimes; i++) {
+      state.loopCurrent = i + 1;
+      updateStatus();
+      const start = performance.now();
+      log(`\n================= 第 ${i+1} 次执行 =================`);
+
+      try {
+        await runOnce(signal);
+        consecutiveFails = 0;
+        const cost = (performance.now() - start) / 1000;
+        log(`本次耗时 ${cost.toFixed(2)} 秒`);
+      } catch (e) {
+        if (e?.name === "AbortError") {
+          setTag("bad", "已停止");
+          log("## 已停止（Abort）");
+          throw e;
+        }
+        consecutiveFails += 1;
+        setTag("bad", `出错（连续失败 ${consecutiveFails}/${cfg.maxFails}）`);
+        log(`第 ${i+1} 次异常：`, String(e));
+        log(`连续失败次数：${consecutiveFails}/${cfg.maxFails}`);
+
+        if (consecutiveFails >= cfg.maxFails) {
+          setTag("bad", "连续失败到阈值，已停止");
+          log("## 连续失败已达阈值，停止");
+          break;
+        }
+
+        const interval = Math.random() * (cfg.maxInterval - cfg.minInterval) + cfg.minInterval;
+        setTag("warn", `失败后冷却 ${interval.toFixed(2)}s…`);
+        log(`失败后 随机休眠 ${interval.toFixed(2)} 秒...`);
+        await sleep(interval * 1000, signal);
+        continue;
+      }
+
+      if (i < cfg.runTimes - 1) {
+        const interval = Math.random() * (cfg.maxInterval - cfg.minInterval) + cfg.minInterval;
+        setTag("warn", `间隔等待 ${interval.toFixed(2)}s…`);
+        log(`正常间隔 随机休眠 ${interval.toFixed(2)} 秒...`);
+        await sleep(interval * 1000, signal);
+      }
+    }
+
+    state.aborter = null;
+    setTag("ok", "执行结束 ✅");
+    updateStatus();
+    log("\n## 所有执行结束");
+  }
+
+  // ===== 绑定事件 =====
+  $("btnClear").onclick = () => { logEl.textContent = ""; };
+
+  $("btnGenDevice").onclick = () => {
+    try{
+      const cfg = readConfig();
+      state.appDevice = buildDevice(cfg);
+      updateStatus();
+      log("已生成/刷新本次固定设备:", state.appDevice);
+      setTag("ok", "设备已就绪 ✅");
+    }catch(e){
+      setTag("bad","设备配置错误");
+      log("ERROR:", String(e));
+    }
+  };
+
+  $("btnRunAll").onclick = async () => {
+    try {
+      await runLoop();
+    } catch (e) {
+      if (e?.name !== "AbortError") {
+        setTag("bad", "执行失败");
+        log("ERROR:", String(e));
+      }
+    }
+  };
+
+  $("btnStop").onclick = () => {
+    if (state.aborter) {
+      state.aborter.abort();
+      log("## stop() 已触发");
+    } else {
+      log("当前没有运行中的循环任务");
+    }
+  };
+
+  // init
+  if ($("clientIp")) $("clientIp").value = genClientIp();
+  updateStatus();
+  log("页面已就绪：填写密钥后点击「一键循环执行」。如需改接口/UA/设备/间隔等请展开「高级设置」。");
+</script>
+</body>
+</html>
